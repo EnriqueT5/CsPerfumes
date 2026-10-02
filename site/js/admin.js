@@ -1,8 +1,6 @@
 const $ = (selector, context = document) => context.querySelector(selector);
 const $$ = (selector, context = document) => [...context.querySelectorAll(selector)];
 
-const OPTION_STORAGE_KEY = 'csperfumes.catalog-options.v1';
-
 const DEFAULT_CATEGORIES = [
   { value: 'disenador', label: 'Diseñador', order: 10 },
   { value: 'arabes', label: 'Árabe', order: 20 },
@@ -348,86 +346,72 @@ function normalizeOptions(raw = {}) {
   return { categories, brands, types };
 }
 
-function readLocalOptions() {
-  try {
-    const raw = localStorage.getItem(OPTION_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
+function backendOptionsError(error, action = 'cargar') {
+  if ([404, 405].includes(error?.status)) {
+    return new Error(`El backend de catálogos no está desplegado. No se puede ${action} usando almacenamiento local. Verifica netlify.toml y la función /api/admin/options.`);
   }
-}
-
-function writeLocalOptions() {
-  try {
-    localStorage.setItem(OPTION_STORAGE_KEY, JSON.stringify(state.catalogOptions));
-  } catch { /* private mode or quota */ }
+  if (error?.status === 503) {
+    return new Error(`${error.message} Revisa las variables SUPABASE_URL y SUPABASE_SECRET_KEY en Netlify.`);
+  }
+  return error;
 }
 
 async function loadCatalogOptions() {
-  let source = readLocalOptions();
   state.optionsRemote = false;
-
   try {
     const payload = await request('/api/admin/options');
-    source = payload.options || payload;
+    state.catalogOptions = normalizeOptions(payload.options || payload);
     state.optionsRemote = true;
+    state.optionsLoaded = true;
+    updateOptionsStorageNote();
   } catch (error) {
-    if (![404, 405].includes(error.status)) {
-      console.warn('No se pudo cargar /api/admin/options; se usarán las listas locales.', error);
-    }
+    state.optionsLoaded = false;
+    updateOptionsStorageNote();
+    throw backendOptionsError(error, 'cargar las categorías, marcas y tipos');
   }
-
-  state.catalogOptions = normalizeOptions(source);
-  state.optionsLoaded = true;
-  updateOptionsStorageNote();
 }
 
 async function persistCatalogOptions() {
   const payload = { options: state.catalogOptions };
   try {
-    await request('/api/admin/options', { method: 'PUT', body: JSON.stringify(payload) });
+    const saved = await request('/api/admin/options', { method: 'PUT', body: JSON.stringify(payload) });
+    state.catalogOptions = normalizeOptions(saved.options || state.catalogOptions);
     state.optionsRemote = true;
-    writeLocalOptions();
+    state.optionsLoaded = true;
     updateOptionsStorageNote();
     return { remote: true };
   } catch (error) {
-    if (![404, 405].includes(error.status)) throw error;
     state.optionsRemote = false;
-    writeLocalOptions();
     updateOptionsStorageNote();
-    return { remote: false };
+    throw backendOptionsError(error, 'guardar las listas del catálogo');
   }
 }
 
 async function deleteCatalogOptionRemote(kind, value) {
   try {
-    await request('/api/admin/options', {
+    const saved = await request('/api/admin/options', {
       method: 'DELETE',
       body: JSON.stringify({ kind, value })
     });
+    if (saved.options) state.catalogOptions = normalizeOptions(saved.options);
     state.optionsRemote = true;
-    writeLocalOptions();
+    state.optionsLoaded = true;
     updateOptionsStorageNote();
     return { remote: true };
   } catch (error) {
-    if (![404, 405].includes(error.status)) throw error;
     state.optionsRemote = false;
-    writeLocalOptions();
     updateOptionsStorageNote();
-    return { remote: false };
+    throw backendOptionsError(error, 'eliminar la opción del catálogo');
   }
 }
 
 function updateOptionsStorageNote() {
   const node = $('#optionsStorageNote');
   if (!node) return;
-  if (state.optionsRemote) {
-    node.hidden = true;
-    node.textContent = '';
-    return;
-  }
-  node.hidden = false;
-  node.textContent = 'Modo compatible: las listas nuevas se guardan en este navegador. Para compartirlas entre equipos y sincronizarlas con Excel, el backend debe implementar /api/admin/options.';
+  node.hidden = Boolean(state.optionsRemote);
+  node.textContent = state.optionsRemote
+    ? ''
+    : 'Sin conexión con el backend de catálogo. Los cambios no se guardarán en este navegador ni se simularán con almacenamiento local.';
 }
 
 function mergeOptionsFromProducts() {
@@ -765,7 +749,7 @@ async function addCatalogOption(kind, label) {
   try {
     const saved = await persistCatalogOptions();
     refreshOptionControls();
-    toast(saved.remote ? 'Lista actualizada.' : 'Lista actualizada en este navegador.');
+    toast('Lista actualizada en Supabase.');
   } finally {
     hideBusy();
   }

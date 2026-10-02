@@ -65,6 +65,18 @@ values
   ('Luxury Collection · Eau de Parfum',10),('Otro',11)
 on conflict (name) do nothing;
 
+-- Compatibilidad con instalaciones anteriores del catálogo.
+-- Las versiones viejas podían no tener trazabilidad de imágenes administradas.
+alter table public.products add column if not exists image_path text null;
+alter table public.catalog_categories add column if not exists cover_image_url text null;
+alter table public.catalog_categories add column if not exists cover_image_path text null;
+
+-- El administrador sube imágenes mediante Netlify Functions usando la clave secreta.
+-- El bucket debe existir también cuando la base ya venía de una versión anterior.
+insert into storage.buckets (id, name, public)
+values ('product-images', 'product-images', true)
+on conflict (id) do update set public = true;
+
 -- El CHECK anterior impedía cualquier categoría nueva.
 alter table public.products drop constraint if exists products_category_check;
 
