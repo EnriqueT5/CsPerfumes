@@ -1,0 +1,52 @@
+[build]
+  publish = "site"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/products"
+  to = "/.netlify/functions/products"
+  status = 200
+[[redirects]]
+  from = "/api/catalog-meta"
+  to = "/.netlify/functions/catalog-meta"
+  status = 200
+[[redirects]]
+  from = "/api/admin/login"
+  to = "/.netlify/functions/admin-login"
+  status = 200
+[[redirects]]
+  from = "/api/admin/session"
+  to = "/.netlify/functions/admin-session"
+  status = 200
+[[redirects]]
+  from = "/api/admin/logout"
+  to = "/.netlify/functions/admin-logout"
+  status = 200
+[[redirects]]
+  from = "/api/admin/products"
+  to = "/.netlify/functions/admin-products"
+  status = 200
+[[redirects]]
+  from = "/api/admin/options"
+  to = "/.netlify/functions/admin-options"
+  status = 200
+[[redirects]]
+  from = "/api/admin/image"
+  to = "/.netlify/functions/admin-image"
+  status = 200
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    Cache-Control = "no-store"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Referrer-Policy = "no-referrer"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"

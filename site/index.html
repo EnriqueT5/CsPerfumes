@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CSPERFUMES: catálogo de fragancias disponibles por categoría.">
+  <meta name="theme-color" content="#090606">
+  <title>CSPERFUMES</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="#inicio">CSPERFUMES</a>
+    <nav class="desktop-nav" id="desktopNav" aria-label="Navegación principal"></nav>
+    <div class="header-actions">
+      <button class="icon-button" id="searchButton" type="button" aria-label="Buscar perfume">⌕</button>
+      <a class="admin-nav-link" href="admin.html">Iniciar sesión</a>
+      <a class="header-cta" href="#categorias">Explorar</a>
+      <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div id="mobileNav"></div>
+    <a class="mobile-admin-link" href="admin.html">Iniciar sesión</a>
+    <button type="button" id="mobileSearchButton">Buscar perfume</button>
+  </div>
+
+  <main>
+    <section class="landing-hero" id="inicio">
+      <div class="landing-hero-background" aria-hidden="true"></div>
+      <div class="landing-hero-noise" aria-hidden="true"></div>
+      <div class="landing-hero-inner">
+        <div class="landing-hero-copy">
+          <h1>Fragancias<br>disponibles</h1>
+          <p class="landing-description">Explora las fragancias disponibles en CSPERFUMES. El catálogo se organiza automáticamente por categoría y se actualiza según disponibilidad.</p>
+          <div class="landing-actions">
+            <a class="landing-button landing-button-primary" href="#categorias">Ver catálogo <span>↘</span></a>
+            <a class="landing-button landing-button-secondary" id="landingWhatsapp" href="#" target="_blank" rel="noopener">Consultar disponibilidad</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="category-directory" id="categorias">
+      <div class="category-directory-head">
+        <div>
+          <p class="section-eyebrow">Explora el catálogo</p>
+          <h2>Elige una categoría.</h2>
+        </div>
+        <p>Cada colección se genera automáticamente con sus perfumes disponibles, su destacado y acceso directo al catálogo completo.</p>
+      </div>
+      <div class="category-directory-grid" id="categoryDirectoryGrid"></div>
+    </section>
+
+    <div id="categorySections"></div>
+
+    <section class="all-products" id="todos">
+      <div class="all-products-heading">
+        <div>
+          <p class="section-eyebrow">Catálogo completo</p>
+          <h2>Todos los perfumes.</h2>
+        </div>
+        <div class="catalog-tools">
+          <div class="category-filter" id="catalogCategoryFilter">
+            <span class="category-filter-label">Categoría</span>
+            <button class="category-filter-trigger" id="categoryFilterTrigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span id="categoryFilterValue">Todos</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"></path></svg>
+            </button>
+            <div class="category-filter-menu" id="categoryFilterMenu" role="listbox" aria-label="Filtrar perfumes por categoría"></div>
+          </div>
+          <button class="text-search-button" id="catalogSearchButton" type="button">Buscar por nombre o marca ⌕</button>
+        </div>
+      </div>
+      <div class="all-products-grid" id="allProductsGrid"></div>
+    </section>
+
+    <section class="contact-banner" id="contacto">
+      <p class="section-eyebrow">Atención directa</p>
+      <h2>¿Ya sabes cuál quieres?</h2>
+      <p>Escríbenos por WhatsApp para consultar disponibilidad, presentación y detalles del perfume que te interesa.</p>
+      <a class="button button-dark" id="generalWhatsapp" href="#" target="_blank" rel="noopener">Abrir WhatsApp</a>
+    </section>
+  </main>
+
+  <footer class="site-footer"><a class="brand" href="#inicio">CSPERFUMES</a><p>Catálogo de perfumes.</p><a href="#inicio">Volver arriba ↑</a></footer>
+  <a class="floating-whatsapp" id="floatingWhatsapp" href="#" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.2A12.5 12.5 0 0 0 5.3 22.1L3.7 28.8l6.9-1.8A12.5 12.5 0 1 0 16 3.2Zm0 22.7c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.1 1.1-4-.3-.4A10.1 10.1 0 1 1 16 25.9Zm5.6-7.5c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.7.1-1.8-.9-3-1.6-4.2-3.7-.3-.5.3-.5.9-1.6.1-.2.1-.4 0-.6l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 3s1.3 3.5 1.5 3.7c.2.2 2.5 3.9 6.1 5.4 2.3 1 3.2 1.1 4.3.9.7-.1 2.1-.9 2.4-1.7.3-.8.3-1.5.2-1.7-.1-.1-.3-.2-.6-.4Z"></path></svg></a>
+
+  <div class="product-modal" id="productModal" aria-hidden="true" role="dialog" aria-modal="true">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Cerrar">×</button>
+    <div class="modal-visual"><div class="modal-word" id="modalWord"></div><img id="modalImage" src="" alt=""></div>
+    <div class="modal-content"><p class="section-eyebrow" id="modalBrand"></p><h2 id="modalTitle"></h2><p class="modal-type" id="modalType"></p><div class="modal-divider"></div><p class="modal-description">Consulta disponibilidad, presentación y detalles directamente por WhatsApp.</p><a class="button button-dark" id="modalWhatsapp" href="#" target="_blank" rel="noopener">Consultar este perfume</a></div>
+  </div>
+
+  <div class="search-overlay" id="searchOverlay" aria-hidden="true">
+    <div class="search-topbar"><span>Buscar perfume</span><button id="searchClose" type="button">×</button></div>
+    <div class="search-shell"><label for="searchInput">¿Qué estás buscando?</label><input id="searchInput" type="search" placeholder="Dior, Lattafa, Khamrah..." autocomplete="off"><p class="search-count" id="searchCount"></p><div class="search-results" id="searchResults"></div></div>
+  </div>
+
+  <div class="catalog-loading" id="catalogLoading"><div><span class="spinner"></span><strong>Cargando catálogo…</strong></div></div>
+  <script src="js/catalog.js"></script>
+</body>
+</html>

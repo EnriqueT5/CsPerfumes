@@ -1,0 +1,9 @@
+{
+  "name": "csperfumes-catalogo",
+  "version": "15.0.0",
+  "private": true,
+  "description": "CSPERFUMES: catálogo dinámico en Netlify + Supabase.",
+  "engines": { "node": ">=18" },
+  "dependencies": { "@supabase/supabase-js": "^2.91.0" },
+  "scripts": { "secret": "node scripts/generate-secret.js" }
+}

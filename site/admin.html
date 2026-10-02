@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#090909">
+  <title>Administración | CSPERFUMES</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <main class="admin-shell">
+    <section class="login-panel" id="loginPanel">
+      <div class="login-card">
+        <p class="eyebrow">CSPERFUMES</p>
+        <h1>Administración</h1>
+        <p class="login-copy">Gestiona el catálogo y la disponibilidad de los perfumes.</p>
+        <form id="loginForm" autocomplete="off">
+          <label for="adminPassword">Contraseña administrativa</label>
+          <input id="adminPassword" name="password" type="password" required autocomplete="current-password" placeholder="••••••••••••">
+          <button class="primary-button" type="submit">Entrar</button>
+          <p class="form-message" id="loginMessage" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="dashboard" id="dashboard" hidden>
+      <header class="admin-header">
+        <div>
+          <p class="eyebrow">CSPERFUMES</p>
+          <h1>Catálogo</h1>
+        </div>
+        <div class="header-actions">
+          <a class="ghost-button" id="viewSiteButton" href="index.html" target="_blank" rel="noopener">Ver sitio</a>
+          <button class="ghost-button" id="manageListsButton" type="button">Listas</button>
+          <button class="ghost-button" id="logoutButton" type="button">Cerrar sesión</button>
+          <button class="primary-button compact" id="newProductButton" type="button">Nuevo perfume</button>
+        </div>
+      </header>
+
+      <section class="stats-grid" aria-label="Resumen del catálogo">
+        <article><span>Total</span><strong id="statTotal">0</strong></article>
+        <article><span>Disponibles</span><strong id="statAvailable">0</strong></article>
+        <article><span>Sold out</span><strong id="statSoldOut">0</strong></article>
+        <article><span>Ocultos</span><strong id="statHidden">0</strong></article>
+      </section>
+
+      <section class="toolbar">
+        <label class="search-field">
+          <span>Buscar</span>
+          <input id="adminSearch" type="search" placeholder="Nombre, marca o tipo..." autocomplete="off">
+        </label>
+        <label>
+          <span>Categoría</span>
+          <select id="categoryFilter">
+            <option value="all">Todas</option>
+          </select>
+        </label>
+        <label>
+          <span>Estado</span>
+          <select id="statusFilter">
+            <option value="all">Todos</option>
+            <option value="available">Disponible</option>
+            <option value="sold_out">Sold out</option>
+            <option value="hidden">Oculto</option>
+          </select>
+        </label>
+      </section>
+
+      <div class="loading-state" id="loadingState">Cargando catálogo…</div>
+      <section class="product-admin-list" id="productList" aria-live="polite"></section>
+      <p class="empty-state" id="emptyState" hidden>No hay productos que coincidan con los filtros.</p>
+    </section>
+  </main>
+
+  <div class="editor-overlay" id="editorOverlay" aria-hidden="true">
+    <section class="editor-card" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+      <div class="editor-header">
+        <div>
+          <p class="eyebrow">Producto</p>
+          <h2 id="editorTitle">Nuevo perfume</h2>
+        </div>
+        <button class="icon-close" id="closeEditorButton" type="button" aria-label="Cerrar">×</button>
+      </div>
+
+      <form id="productForm">
+        <input id="productId" type="hidden">
+        <input id="currentImageUrl" type="hidden">
+        <input id="currentImagePath" type="hidden">
+
+        <div class="form-grid">
+          <label>
+            <span>Marca</span>
+            <div class="combo-row">
+              <select id="brandInput" required aria-label="Marca"></select>
+              <button class="mini-button" type="button" data-add-option="brands">Nueva</button>
+            </div>
+          </label>
+          <label>
+            <span>Nombre</span>
+            <input id="nameInput" type="text" maxlength="160" required placeholder="Sauvage Elixir">
+          </label>
+          <label class="wide">
+            <span>Tipo / concentración</span>
+            <div class="combo-row">
+              <select id="typeInput" required aria-label="Tipo o concentración"></select>
+              <button class="mini-button" type="button" data-add-option="types">Nuevo</button>
+            </div>
+          </label>
+          <label>
+            <span>Categoría</span>
+            <div class="combo-row">
+              <select id="categoryInput" required aria-label="Categoría"></select>
+              <button class="mini-button" type="button" data-add-option="categories">Nueva</button>
+            </div>
+          </label>
+          <label>
+            <span>Género</span>
+            <select id="genderInput" required>
+              <option value="hombre">Hombre</option>
+              <option value="mujer">Mujer</option>
+              <option value="unisex">Unisex</option>
+            </select>
+          </label>
+          <label>
+            <span>Estado</span>
+            <select id="statusInput" required>
+              <option value="available">Disponible</option>
+              <option value="sold_out">Sold out</option>
+              <option value="hidden">Oculto</option>
+            </select>
+          </label>
+          <label>
+            <span>Orden</span>
+            <input id="sortOrderInput" type="number" step="1" min="0" value="0" inputmode="numeric">
+          </label>
+        </div>
+
+        <label class="featured-check">
+          <input id="featuredInput" type="checkbox">
+          <span>Usar como perfume destacado de su categoría</span>
+        </label>
+
+        <div class="image-editor">
+          <div class="image-preview" id="imagePreview">
+            <span>Sin imagen</span>
+          </div>
+          <div class="image-controls">
+            <label class="file-button" for="imageInput">Seleccionar imagen</label>
+            <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+            <p class="image-file-name" id="imageFileName"></p>
+          </div>
+        </div>
+
+        <div class="editor-footer">
+          <p class="form-message" id="editorMessage" aria-live="polite"></p>
+          <div>
+            <button class="ghost-button" id="cancelEditorButton" type="button">Cancelar</button>
+            <button class="primary-button compact" id="saveProductButton" type="submit">Guardar cambios</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="editor-overlay" id="listsOverlay" aria-hidden="true">
+    <section class="editor-card lists-card" role="dialog" aria-modal="true" aria-labelledby="listsTitle">
+      <div class="editor-header">
+        <div>
+          <p class="eyebrow">Configuración</p>
+          <h2 id="listsTitle">Listas del catálogo</h2>
+          <p class="dialog-copy">Estas listas alimentan los combos del formulario y quedan preparadas para la futura sincronización con Excel.</p>
+        </div>
+        <button class="icon-close" id="closeListsButton" type="button" aria-label="Cerrar">×</button>
+      </div>
+
+      <div class="lists-content">
+        <p class="options-storage-note" id="optionsStorageNote" hidden></p>
+        <div class="lists-grid">
+          <section class="list-panel">
+            <div class="list-panel-heading">
+              <div>
+                <p class="eyebrow">Categorías</p>
+                <h3>Catálogos</h3>
+              </div>
+              <span id="categoryCount">0</span>
+            </div>
+            <form class="inline-option-form" data-option-form="categories">
+              <input name="label" type="text" maxlength="80" required placeholder="Ej. Nicho">
+              <button class="primary-button compact" type="submit">Agregar</button>
+            </form>
+            <div class="option-list" id="categoriesList"></div>
+          </section>
+
+          <section class="list-panel">
+            <div class="list-panel-heading">
+              <div>
+                <p class="eyebrow">Marcas</p>
+                <h3>Fabricantes</h3>
+              </div>
+              <span id="brandCount">0</span>
+            </div>
+            <form class="inline-option-form" data-option-form="brands">
+              <input name="label" type="text" maxlength="120" required placeholder="Ej. Dior">
+              <button class="primary-button compact" type="submit">Agregar</button>
+            </form>
+            <div class="option-list" id="brandsList"></div>
+          </section>
+
+          <section class="list-panel">
+            <div class="list-panel-heading">
+              <div>
+                <p class="eyebrow">Tipo</p>
+                <h3>Concentraciones</h3>
+              </div>
+              <span id="typeCount">0</span>
+            </div>
+            <form class="inline-option-form" data-option-form="types">
+              <input name="label" type="text" maxlength="120" required placeholder="Ej. Eau de Parfum">
+              <button class="primary-button compact" type="submit">Agregar</button>
+            </form>
+            <div class="option-list" id="typesList"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="busy-overlay" id="busyOverlay" aria-hidden="true" aria-live="assertive" aria-busy="true">
+    <div class="busy-card" role="status">
+      <span class="busy-spinner" aria-hidden="true"></span>
+      <div>
+        <strong id="busyTitle">Procesando…</strong>
+        <p id="busyDetail">Espera un momento. No cierres esta ventana.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="js/admin.js"></script>
+</body>
+</html>
