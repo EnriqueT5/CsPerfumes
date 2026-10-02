@@ -71,14 +71,26 @@ function normalizeProductInput(raw = {}, { partial = false } = {}) {
   return data;
 }
 
-const LEGACY_ASSET_BASE = process.env.LEGACY_ASSET_BASE || 'https://raw.githubusercontent.com/EnriqueT5/CsPerfumes/ef9da1288d6f14851cf1a9a6b4303c280394de90/site';
 
 function resolveImageUrl(value = '') {
   const image = String(value || '').trim();
   if (!image) return '';
-  if (/^https?:\/\//i.test(image) || image.startsWith('data:')) return image;
-  const clean = image.replace(/^\.\//, '').replace(/^\//, '');
-  if (clean.startsWith('assets/')) return `${LEGACY_ASSET_BASE}/${clean}`;
+
+  // Supabase Storage devuelve URL absoluta pública. No tocarla.
+  if (/^https?:\/\//i.test(image)) {
+    // Los registros históricos pueden conservar la URL del repo viejo.
+    // Si contiene /site/assets/images/..., la convertimos al asset local
+    // publicado por el repo actual.
+    const legacy = image.match(/\/site\/(assets\/images\/[^?#]+)/i);
+    if (legacy) return `/${legacy[1]}`;
+    return image;
+  }
+
+  if (image.startsWith('data:')) return image;
+
+  const clean = image.replace(/^\.\//, '').replace(/^\//, '').replace(/^site\//, '');
+  if (clean.startsWith('assets/')) return `/${clean}`;
+
   return image;
 }
 

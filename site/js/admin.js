@@ -41,13 +41,23 @@ const GENDER_LABELS = { hombre: 'Hombre', mujer: 'Mujer', unisex: 'Unisex' };
 const STATUS_LABELS = { available: 'Disponible', sold_out: 'Sold out', hidden: 'Oculto' };
 
 
-const LEGACY_IMAGE_BASE = 'https://raw.githubusercontent.com/EnriqueT5/CsPerfumes/ef9da1288d6f14851cf1a9a6b4303c280394de90/site/';
 function resolveAdminImage(value = '') {
   const image = String(value || '').trim();
   if (!image) return '';
-  if (/^https?:\/\//i.test(image) || image.startsWith('data:') || image.startsWith('blob:') || image.startsWith('/local-uploads/')) return image;
-  if (image.startsWith('/assets/')) return `${LEGACY_IMAGE_BASE}${image.slice(1)}`;
-  if (image.startsWith('assets/')) return `${LEGACY_IMAGE_BASE}${image}`;
+
+  // URL absoluta = Supabase Storage (o cualquier CDN actual).
+  // Las referencias antiguas al repo borrado se convierten a assets locales.
+  if (/^https?:\/\//i.test(image)) {
+    const legacy = image.match(/\/site\/(assets\/images\/[^?#]+)/i);
+    if (legacy) return `/${legacy[1]}`;
+    return image;
+  }
+
+  if (image.startsWith('data:') || image.startsWith('blob:') || image.startsWith('/local-uploads/')) return image;
+
+  const clean = image.replace(/^\.\//, '').replace(/^\//, '').replace(/^site\//, '');
+  if (clean.startsWith('assets/')) return `/${clean}`;
+
   return image;
 }
 function adminImagePlaceholder(label = 'CSPERFUMES') {

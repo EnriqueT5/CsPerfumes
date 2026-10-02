@@ -41,3 +41,16 @@ Este ZIP sí es la raíz completa del proyecto para reemplazar el contenido del 
 - Icono flotante de WhatsApp restaurado con SVG real.
 - Catálogos individuales rediseñados: encabezado editorial, contador, filtros, tarjetas con mejor jerarquía visual y fallback si una imagen histórica no carga.
 - Combos del editor de producto rediseñados con menú oscuro propio, selección dorada y experiencia móvil sin el desplegable nativo gigante.
+## V19 - estrategia de imágenes
+
+CSPERFUMES usa dos orígenes de imagen al mismo tiempo:
+
+1. **Imágenes históricas:** archivos físicos bajo `site/assets/images/`.
+   Deben estar versionados en este mismo repositorio de GitHub.
+2. **Imágenes nuevas desde Admin:** se suben a Supabase Storage
+   (`product-images`) y se guardan como URL HTTPS absoluta.
+
+El código detecta ambos casos automáticamente.
+
+Importante: no vuelvas a configurar un commit antiguo como base de imágenes.
+Si el repo se elimina o cambia el SHA, todas las fotos volverían a morir.

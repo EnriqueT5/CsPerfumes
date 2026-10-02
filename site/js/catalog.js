@@ -3,7 +3,6 @@
   const $$ = (s,c=document) => [...c.querySelectorAll(s)];
   const WHATSAPP_NUMBER = '593939159989';
   const IS_CATEGORY_PAGE = /\/pages\/categoria\.html$/.test(location.pathname);
-  const LEGACY_IMAGE_BASE = 'https://raw.githubusercontent.com/EnriqueT5/CsPerfumes/ef9da1288d6f14851cf1a9a6b4303c280394de90/site/';
 
   const FALLBACK_CATEGORIES = [
     {id:'disenador',nav:'Diseñador',eyebrow:'Casas de diseñador',title:'Perfumes de diseñador',line:'Firmas icónicas, composiciones reconocibles y presencia elegante.',description:'Una selección de firmas internacionales con acceso rápido al resto de la categoría.',word:'DESIGNER',theme:'noir'},
@@ -37,9 +36,24 @@
   function resolveImage(value=''){
     const image=String(value||'').trim();
     if(!image) return '';
-    if(/^https?:\/\//i.test(image) || image.startsWith('data:') || image.startsWith('blob:') || image.startsWith('/local-uploads/')) return image;
-    if(image.startsWith('/assets/')) return `${LEGACY_IMAGE_BASE}${image.slice(1)}`;
-    if(image.startsWith('assets/')) return `${LEGACY_IMAGE_BASE}${image}`;
+
+    // Las imágenes nuevas del admin viven en Supabase y llegan como URL absoluta.
+    // Se dejan intactas.
+    if(/^https?:\/\//i.test(image)){
+      // Compatibilidad con los registros viejos que todavía apuntan al repo
+      // eliminado. Conservamos únicamente la ruta /assets/... y la servimos
+      // desde el repo actual de Netlify.
+      const legacy=image.match(/\/site\/(assets\/images\/[^?#]+)/i);
+      if(legacy) return `/${legacy[1]}`;
+      return image;
+    }
+
+    if(image.startsWith('data:') || image.startsWith('blob:') || image.startsWith('/local-uploads/')) return image;
+
+    // Assets históricos incluidos físicamente en GitHub/Netlify.
+    const clean=image.replace(/^\.\//,'').replace(/^\//,'').replace(/^site\//,'');
+    if(clean.startsWith('assets/')) return `/${clean}`;
+
     return image;
   }
   function placeholderImage(label='CSPERFUMES'){

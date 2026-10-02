@@ -1,0 +1,16 @@
+CSPERFUMES V19 - IMÁGENES
+
+HISTÓRICAS (GitHub):
+  site/assets/images/...
+
+NUEVAS (Admin):
+  Supabase Storage bucket: product-images
+
+La aplicación acepta:
+  /assets/images/...
+  assets/images/...
+  URLs antiguas raw.githubusercontent.com/.../site/assets/images/...
+  URLs HTTPS actuales de Supabase
+
+Las URLs antiguas se convierten automáticamente a /assets/images/...
+y las URLs HTTPS de Supabase se dejan intactas.
